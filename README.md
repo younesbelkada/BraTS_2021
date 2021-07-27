@@ -12,6 +12,10 @@ The RSNA-ASNR-MICCAI BraTS 2021 challenge utilizes multi-institutional pre-opera
 
 ### 27 July
 
-*Try to understand the problem, is it a binary classification problem or image segmentation ?
-*Try to understand the input
-*
+* Try to understand the problem, is it a binary classification problem or image segmentation ?
+* Try to understand the input
+* One model per tool -> then maybe agregate the results ?
+* One model per tool -> one submission per tool
+
+#### Input files
+
