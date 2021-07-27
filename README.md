@@ -1,1 +1,15 @@
 # BraTS_2021
+
+Our implementation of the BraTS 2021 challenge.
+
+```
+The Brain Tumor Segmentation (BraTS) challenge celebrates its 10th anniversary, and this year is jointly organized by the Radiological Society of North America (RSNA), the American Society of Neuroradiology (ASNR), and the Medical Image Computing and Computer Assisted Interventions (MICCAI) society.
+
+The RSNA-ASNR-MICCAI BraTS 2021 challenge utilizes multi-institutional pre-operative baseline multi-parametric magnetic resonance imaging (mpMRI) scans, and focuses on the evaluation of state-of-the-art methods for (Task 1) the segmentation of intrinsically heterogeneous brain glioblastoma sub-regions in mpMRI scans. Furthemore, this BraTS 2021 challenge also focuses on the evaluation of (Task 2) classification methods to predict the MGMT promoter methylation status.
+```
+
+## Classification
+
+
+
+## Segmentation
