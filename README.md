@@ -17,6 +17,7 @@ The RSNA-ASNR-MICCAI BraTS 2021 challenge utilizes multi-institutional pre-opera
 * One model per tool -> then maybe agregate the results ?
 * One model per tool -> one submission per tool
 * Dataloader in pytorch to load dcm images / normalize input (256 pixels)
+* Learnable data normalization
 
 #### Input files
 
