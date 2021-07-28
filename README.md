@@ -23,7 +23,11 @@ The RSNA-ASNR-MICCAI BraTS 2021 challenge utilizes multi-institutional pre-opera
 
 #### Approaches that we can try:
 
-* Baseline : Mean image + Resnet (binary Classification)
+* Baseline : Resnet (binary Classification) using one tool
+
+### 29 July
+
+
 
 
 #### Input files
