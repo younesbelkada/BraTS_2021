@@ -19,5 +19,12 @@ The RSNA-ASNR-MICCAI BraTS 2021 challenge utilizes multi-institutional pre-opera
 * Dataloader in pytorch to load dcm images / normalize input (256 pixels) **Done**
 * Learnable data normalization
 
+### 28 July
+
+#### Approaches that we can try:
+
+* Baseline : Mean image + Resnet (binary Classification)
+
+
 #### Input files
 

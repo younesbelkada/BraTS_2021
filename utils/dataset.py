@@ -57,7 +57,7 @@ class BraTS_Dataset(Dataset):
         
 
     def __len__(self):
-        return len(self.img_labels)
+        return len(self.image_labels)
 
     def __getitem__(self, idx):
         img_path = self.path_to_images[idx]
