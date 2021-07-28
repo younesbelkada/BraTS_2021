@@ -27,6 +27,7 @@ The RSNA-ASNR-MICCAI BraTS 2021 challenge utilizes multi-institutional pre-opera
 
 ### 29 July
 
+* RNN with vec size 500
 
 
 
