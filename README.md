@@ -57,7 +57,12 @@ The agent controls the training and evaluation process of your model and is cons
 
 #### Approaches that we can try:
 
-* Baseline : Mean image + Resnet (binary Classification)
+* Baseline : Resnet (binary Classification) using one tool
+
+### 29 July
+
+* RNN with vec size 500
+
 
 
 #### Input files
