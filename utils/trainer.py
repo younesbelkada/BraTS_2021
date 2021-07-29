@@ -7,7 +7,7 @@ from sklearn.metrics import confusion_matrix
 
 def print_summary_step(step, train_loss, acc):
     text = "Step : {} | ".format(step) + "m_step_loss : %.3f | m_step_acc : %.1f " % (train_loss, acc)
-    print('{}'.format(text), end="\r")s
+    print('{}'.format(text), end="\r")
 
 class Trainer():
     """
