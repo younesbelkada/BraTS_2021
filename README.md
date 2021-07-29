@@ -65,5 +65,3 @@ The agent controls the training and evaluation process of your model and is cons
 * Understand how to deal with video data with arbitrary variable number of frames
 
 
-#### Input files
-
