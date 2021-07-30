@@ -64,4 +64,10 @@ The agent controls the training and evaluation process of your model and is cons
 * RNN with vec size 500 -> arthur will do this man
 * Understand how to deal with video data with arbitrary variable number of frames
 
+### 30 July
+
+* Point cloud
+* KP Conv
+* voxel
+
 
