@@ -1,0 +1,37 @@
+{   "exp_name": "example_exp_0",
+    "agent": "mlp_mixer",
+    "mode": "train",
+    "testing": false,
+    "cuda": true,
+    "gpu_device": 0,
+    "seed": 1337,
+  
+    "batch_size": 4,
+    "in_channels": 500,
+    "learning_rate": 0.0002,
+    "weight_decay": 0,
+    "beta1": 0.5,
+    "beta2": 0.999,
+  
+    "max_epoch": 100,
+  
+    "validate_every": 1,
+  
+    "checkpoint_file": "checkpoint.pth.tar",
+  
+    "data_loader": "ExampleDataLoader",
+    "data_loader_workers": 8,
+    "pin_memory": true,
+    "async_loading": true,
+  
+    "data_mode": "train",
+    "data_folder": "./data/",
+    "path_csv": "./data/train_label.csv",
+
+    "val_pr": 0.2,
+    "build": false,
+    "patches": false,
+    "img_size": 255,
+    "patch_size": 75,
+    "stride": 75
+  }

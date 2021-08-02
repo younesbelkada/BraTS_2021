@@ -2,11 +2,11 @@ from dataset.dataset import *
 from graphs.model.mixer import *
 from agents.example import ExampleAgent
 
-path_dataset = './archive'
-path_csv = './archive/train_labels.csv'
+path_dataset = './data'
+path_csv = './data/train_labels.csv'
 tool_name = 'FLAIR'
 patches = True
-build = False
+build = True
 batch_size = 4
 epochs = 100
 
@@ -26,4 +26,4 @@ optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
 criterion = nn.BCELoss()
 
 agent = ExampleAgent(None, model, train_dataloader, criterion, optimizer)
-agent.train(epochs,val_dataloader)
+agent.train(epochs)

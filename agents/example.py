@@ -9,20 +9,21 @@ from torch import nn
 from torch.backends import cudnn
 from torch.autograd import Variable
 
-#from agents.base import BaseAgent
+from agents.base import BaseAgent
 
 # import your classes here
 
-#from utils.metrics import AverageMeter, AverageMeterList
-#from utils.misc import print_cuda_statistics
+from utils.metrics import AverageMeter, AverageMeterList
+from utils.misc import print_cuda_statistics
 from utils.utils_train import binary_acc, print_summary_step
 
 cudnn.benchmark = True
 
 
-class ExampleAgent():
+class ExampleAgent(BaseAgent):
 
     def __init__(self, config, model, data_loader, loss, optimizer):
+        super().__init__(config)
 
         # define models
         self.model = model
@@ -43,7 +44,7 @@ class ExampleAgent():
 
         # set cuda flag
         self.is_cuda = torch.cuda.is_available()
-        #if self.is_cuda and not self.config.cuda:
+        # if self.is_cuda and not self.config.cuda:
         #    self.logger.info("WARNING: You have a CUDA device, so you should probably enable CUDA")
 
         #self.cuda = self.is_cuda & self.config.cuda
@@ -56,13 +57,13 @@ class ExampleAgent():
             #torch.cuda.set_device(self.config.gpu_device)
             self.model = self.model.cuda()
             self.loss = self.loss.cuda()
-            #self.logger.info("Program will run on *****GPU-CUDA***** ")
-            #print_cuda_statistics()
+            self.logger.info("Program will run on *****GPU-CUDA***** ")
+            print_cuda_statistics()
         else:
             self.logger.info("Program will run on *****CPU*****\n")
 
         # Model Loading from the latest checkpoint if not found start from scratch.
-        #self.load_checkpoint(self.config.checkpoint_file)
+        # self.load_checkpoint(self.config.checkpoint_file)
         # Summary Writer
         self.summary_writer = None
 
@@ -113,7 +114,7 @@ class ExampleAgent():
             accuracies = []
 
             for x_batch, y_batch in self.data_loader:
-                x_batch = x_batch.cuda()
+                x_batch = x_batch.float().cuda()
                 y_batch = y_batch.cuda()
                 self.optimizer.zero_grad()
                 output = self.model(x_batch)
@@ -133,9 +134,9 @@ class ExampleAgent():
                     accuracies = []
 
             i = 0
-            #best_ap, best_ac, ap_val, acc_val = self.eval_epoch(best_ap, best_ac)
-            print('')
-            print('Epoch {} | mAP_val : {} | mAcc_val :{}'.format(epoch+1, ap_val, acc_val))
+            # best_ap, best_ac, ap_val, acc_val = self.eval_epoch(best_ap, best_ac)
+            # print('')
+            # print('Epoch {} | mAP_val : {} | mAcc_val :{}'.format(epoch+1, ap_val, acc_val))
 
     def train_one_epoch(self):
         """
