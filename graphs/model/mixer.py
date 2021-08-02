@@ -2,12 +2,12 @@ import torch.nn as nn
 import torch
 
 class Encoder_2Dblock(nn.Module):
-    def __init__(self):
+    def __init__(self, in_channels=500):
         super().__init__()
 
         #self.norm = nn.BatchNorm3d(1)
         self.conv = nn.Sequential(
-            nn.Conv2d(in_channels=500, out_channels=32, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.Conv2d(in_channels=in_channels, out_channels=32, kernel_size=3, stride=1, padding=1, bias=False),
             nn.ReLU(),
             nn.BatchNorm2d(32),
             nn.MaxPool2d(2),
@@ -35,7 +35,7 @@ class Encoder_2Dblock(nn.Module):
         return out
 
 class MLP_Mixer(nn.Module):
-    def __init__(self):
+    def __init__(self, in_channels=500):
         super().__init__()
 
         #self.norm = nn.BatchNorm3d(1)
@@ -51,11 +51,11 @@ class MLP_Mixer(nn.Module):
             nn.Linear(128, 1),
             nn.Sigmoid()
         )
-        self.mixers = nn.ModuleList([Encoder_2Dblock().cuda() for i in range(self.nb_mixers)])
+        self.mixers = nn.ModuleList([Encoder_2Dblock(in_channels) for i in range(self.nb_mixers)])
 
 
     def forward(self, x):
-        embeddings = [self.mixers[i](x[:, i, :, :, :]) for i in range(self.nb_mixers)]
+        embeddings = [self.mixers[i](x[:, :, i, :, :]) for i in range(self.nb_mixers)]
         embeddings = torch.cat(embeddings).view(x.size(0), -1)
         out = self.mixer_net(embeddings)
         return out
