@@ -70,4 +70,12 @@ The agent controls the training and evaluation process of your model and is cons
 * KP Conv
 * voxel
 
+### 1st August 
+
+Articles too read : 
+* UNETR: Transformers for 3D Medical Image Segmentation, [source](https://arxiv.org/pdf/2103.10504v1.pdf)
+* One-pass Multi-task Networks with Cross-task Guided Attention for Brain Tumor Segmentation, [source](https://arxiv.org/pdf/1906.01796v2.pdf)
+* Medical Image Segmentation Using Squeeze-and-Expansion Transformers [source](https://arxiv.org/pdf/2105.09511v3.pdf)
+* Regression Concept Vectors for Bidirectional Explanations in Histopathology [source](https://arxiv.org/pdf/1904.04520v1.pdf)
+* Recurrent Saliency Transformation Network: Incorporating Multi-Stage Visual Cues for Small Organ Segmentation [source](https://arxiv.org/pdf/1709.04518v4.pdf)
 
