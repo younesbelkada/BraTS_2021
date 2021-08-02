@@ -12,6 +12,9 @@ def binary_acc(y_pred, y_test):
     #print(acc)
     return acc
 
+def print_summary_step(step, train_loss, acc):
+    text = "Step : {} | ".format(step) + "m_step_loss : %.3f | m_step_acc : %.1f " % (train_loss, acc)
+    print('{}'.format(text), end="\r")
 
 def average_precision(output, target):
     return average_precision_score(target.detach().cpu().numpy(), output.detach().cpu().numpy())
