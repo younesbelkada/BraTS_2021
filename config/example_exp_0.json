@@ -1,5 +1,5 @@
 {   "exp_name": "example_exp_0",
-    "agent": "mlp_mixer",
+    "agent": "MLP_MixerAgent",
     "mode": "train",
     "testing": false,
     "cuda": true,
@@ -19,19 +19,20 @@
   
     "checkpoint_file": "checkpoint.pth.tar",
   
-    "data_loader": "ExampleDataLoader",
+    "data_loader": "BraTS_Dataset_mean",
     "data_loader_workers": 8,
     "pin_memory": true,
     "async_loading": true,
   
-    "data_mode": "train",
-    "data_folder": "./data/",
-    "path_csv": "./data/train_label.csv",
+    "data_mode": "images",
+    "img_dir": "/home/arthur/Work/kaggle/BraTS_2021/data/",
+    "annotation_file": "/home/arthur/Work/kaggle/BraTS_2021/data/train_labels.csv",
 
-    "val_pr": 0.2,
+    "valid_size": 0.2,
     "build": false,
     "patches": false,
     "img_size": 255,
     "patch_size": 75,
-    "stride": 75
+    "stride": 75,
+    "momentum": 0.9
   }

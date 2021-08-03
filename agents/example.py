@@ -44,8 +44,8 @@ class ExampleAgent(BaseAgent):
 
         # set cuda flag
         self.is_cuda = torch.cuda.is_available()
-        # if self.is_cuda and not self.config.cuda:
-        #    self.logger.info("WARNING: You have a CUDA device, so you should probably enable CUDA")
+        if self.is_cuda and not self.config.cuda:
+           self.logger.info("WARNING: You have a CUDA device, so you should probably enable CUDA")
 
         #self.cuda = self.is_cuda & self.config.cuda
         self.cuda = self.is_cuda
@@ -100,43 +100,6 @@ class ExampleAgent(BaseAgent):
         Main training loop
         :return:
         """
-        running_loss = 0
-        i = 0
-        best_ap = 0
-        best_ac = 0
-        grads_x = []
-        grads = []
-        self.model.train()
-        
-        for epoch in range(epochs):
-            #self.parser.model = self.parser.model.train().to(self.parser.device)
-            losses = []
-            accuracies = []
-
-            for x_batch, y_batch in self.data_loader:
-                x_batch = x_batch.float().cuda()
-                y_batch = y_batch.cuda()
-                self.optimizer.zero_grad()
-                output = self.model(x_batch)
-                loss = self.loss(output.squeeze(), y_batch.float())
-                running_loss += loss.item()
-                
-                loss.backward()
-                losses.append(loss.item())
-                accuracies.append(binary_acc(output.type(torch.float), y_batch).item())
-
-                self.optimizer.step()
-                i += 1
-
-                if i%10 == 0:
-                    print_summary_step(i, np.mean(losses), np.mean(accuracies))
-                    losses = []
-                    accuracies = []
-
-            i = 0
-            # best_ap, best_ac, ap_val, acc_val = self.eval_epoch(best_ap, best_ac)
-            # print('')
-            # print('Epoch {} | mAP_val : {} | mAcc_val :{}'.format(epoch+1, ap_val, acc_val))
 
     def train_one_epoch(self):
         """

@@ -12,7 +12,7 @@ from torch.autograd import Variable
 from agents.base import BaseAgent
 from graphs.models.mlp_mixer import MLP_Mixer
 from graphs.losses.example import BinaryCrossEntropy
-from datasets.brats import BraTS_Dataset_mean
+from datasets.brats import BraTS_mean_Dataloader
 
 # import your classes here
 
@@ -33,7 +33,7 @@ class MLP_MixerAgent(BaseAgent):
         self.model = MLP_Mixer(self.config)
 
         # define data_loader
-        self.data_loader = BraTS_Dataset_mean(self.config)
+        self.data_loader = BraTS_mean_Dataloader(self.config)
 
         # define loss
         self.loss = BinaryCrossEntropy()
@@ -130,7 +130,7 @@ class MLP_MixerAgent(BaseAgent):
         except KeyboardInterrupt:
             self.logger.info("You have entered CTRL+C.. Wait to finalize")
 
-    def train(self, epochs):
+    def train(self):
         """
         Main training loop
         :return:
@@ -150,10 +150,10 @@ class MLP_MixerAgent(BaseAgent):
     def train_one_epoch(self):
         """
         One epoch of training
-        uses tqdm to load data in parallel
+        uses tqdm to load data in parallel? Nope thats not true
         :return:
         """
-        tqdm_batch = tqdm(self.data_loader, total=len(self.data_loader),
+        tqdm_batch = tqdm(self.data_loader.train_loader, total=self.data_loader.train_loader.train_iterations,
                           desc="Epoch-{}-".format(self.current_epoch))
         # Set the model to be in training mode
         self.model.train()
@@ -168,12 +168,12 @@ class MLP_MixerAgent(BaseAgent):
                 x, y = x.cuda(non_blocking=self.config.async_loading), y.cuda(non_blocking=self.config.async_loading)
 
             # current iteration over total iterations
-            progress = float(self.current_epoch * self.data_loader.train_iterations + current_batch) / (
-                    self.config.max_epoch * self.data_loader.train_iterations)
+            progress = float(self.current_epoch * self.data_loader.train_loader.train_iterations + current_batch) / (
+                    self.config.max_epoch * self.data_loader.train_loader.train_iterations)
             # progress = float(self.current_iteration) / (self.config.max_epoch * self.data_loader.train_iterations)
             x, y = Variable(x), Variable(y)
             lr = adjust_learning_rate(self.optimizer, self.current_epoch, self.config, batch=current_batch,
-                                      nBatch=self.data_loader.train_iterations)
+                                      nBatch=self.data_loader.train_loader.train_iterations)
             # model
             pred = self.model(x, progress)
             # loss
@@ -207,7 +207,7 @@ class MLP_MixerAgent(BaseAgent):
         One cycle of model validation
         :return:
         """
-        tqdm_batch = tqdm(self.data_loader, total=self.data_loader,
+        tqdm_batch = tqdm(self.data_loader.valid_loader, total=self.data_loader.valid_iterations,
                           desc="Valiation at -{}-".format(self.current_epoch))
 
         # set the model in training mode

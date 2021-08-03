@@ -25,9 +25,9 @@ def main():
 
     # parse the config json file
     config = process_config(args.config)
-
     # Create the Agent and pass all the configuration to it then run it..
     agent_class = globals()[config.agent]
+
     agent = agent_class(config)
     agent.run()
     agent.finalize()
