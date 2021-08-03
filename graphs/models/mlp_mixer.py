@@ -28,10 +28,7 @@ class Encoder_2Dblock(nn.Module):
 
     def forward(self, x):
         x = self.conv(x)
-        #print(x.shape)
         x = x.view(x.size(0), -1)
-        #print(x.shape)
-        #exit(0)
         out = self.fc(x)
         return out
 

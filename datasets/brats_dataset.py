@@ -16,20 +16,20 @@ import pydicom
 from p_tqdm import p_map
 
 class BraTS_Dataset_mean(Dataset):
-    def __init__(self, img_dir, annotation_file, transform=None, build_=False, patches=False,split="train"):
+    def __init__(self, img_dir, annotation_file, transform=None, build_=False, patches=True,split="train"):
         
         self.img_dir = img_dir
         self.annotation_file = annotation_file
         self.ext = '*.dcm'
         self.tools = ['FLAIR', 'T1w', 'T1wCE', 'T2w']
-        self.path_output = 'archives_mean'
+        self.path_output = img_dir.replace('data','archives_mean')
         
         self.split = split
 
         self.transform = transform
         self.build_ = build_
         self.patches = patches
-        self.im_size = 224
+        self.im_size = 225
         self.patch_size = 75
         self.stride = 75
         self.image_path = []
@@ -42,7 +42,7 @@ class BraTS_Dataset_mean(Dataset):
         for tool in self.tools:
             path_to_images = glob(os.path.join(self.img_dir, self.split, subjects, tool, self.ext))
             if self.build_:
-                mean_im = np.zeros((224,224), np.float)
+                mean_im = np.zeros((self.im_size,self.im_size), np.float)
                 for im in path_to_images:
                     # depending on the file extension, either get the np array, or process the image directly 
                     if self.ext == "*.dcm":
@@ -61,54 +61,45 @@ class BraTS_Dataset_mean(Dataset):
                     mean_im = (mean_im/len(path_to_images)).astype(np.uint8)
                 mean_pil_im = Image.fromarray(mean_im.astype(np.uint8))
                 mean_pil_im.save(os.path.join(output_directory_subject, subjects+'_{}.png'.format(tool)))
-            self.targets.append(label)
-            self.image_path.append(os.path.join(output_directory_subject, subjects+'_{}.png'.format(tool)))
+
+            # this oprobably slows it down cuz of the accesses to label? Also every "self adds a reading to the data, should be local to each job"
+            pt = (os.path.join(output_directory_subject, subjects+'_{}.png'.format(tool)))
+            return [pt,label]
 
 
     def preprocess(self):
-        self.dict_paths = {}
-        self.dict_labels = {}
-        self.dict_subject = {}
+        # for now, I get black images.... but if you remove this, should work
         self.csv_df = pd.read_csv(self.annotation_file,header=0,index_col="BraTS21ID")
 
         array_data = os.listdir(os.path.join(self.img_dir, self.split))
-
+        self.output_directory = os.path.join(self.path_output, self.split)
         if self.build_: 
-            self.output_directory = os.path.join('archives_mean', self.split)
             os.makedirs(self.output_directory,exist_ok=True)
-
-        print("starting _job")
-        # process in parallel
-        print(p_map(self.job,array_data,self.csv_df["MGMT_value"]))
+        temp_data = (p_map(self.job,array_data,self.csv_df["MGMT_value"]))
+        self.image_path,self.targets = zip(*temp_data)
 
     def __len__(self):
-        return len(self.dict_labels)
+        return len(self.image_path)
 
     def __getitem__(self, idx):
         img_path = self.image_path[idx]
-        subject = img_path.split("/")[-1][:-4]
-
-        print(subject)
-        exit(0)
+        label = self.targets[idx]
+        
 
         image = np.zeros((4,self.im_size,self.im_size), np.uint8)
-        image[0, :, :] = np.array(Image.open(os.path.join(img_path, subject+'_FLAIR.png')).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
-        image[1, :, :] = np.array(Image.open(os.path.join(img_path, subject+'_T1w.png')).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
-        image[2, :, :] = np.array(Image.open(os.path.join(img_path, subject+'_T1wCE.png')).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
-        image[3, :, :] = np.array(Image.open(os.path.join(img_path, subject+'_T2w.png')).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[0, :, :] = np.array(Image.open(img_path).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[1, :, :] = np.array(Image.open(img_path.replace('FLAIR','T1w'  )).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[2, :, :] = np.array(Image.open(img_path.replace('FLAIR','T1wCE')).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[3, :, :] = np.array(Image.open(img_path.replace('FLAIR','T2w'  )).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
 
-        input_tensor = torch.from_numpy(image)
+        input_tensor = torch.from_numpy(image).type(torch.float)
         if self.transform:
             input_tensor = self.transform(input_tensor)
 
-        true_index = self.dict_subject[idx]
-        label = self.dict_labels[true_index]
-        #print(input_tensor.shape)
         if self.patches:
             patches = input_tensor.unfold(1, self.patch_size, self.stride).unfold(2, self.patch_size, self.stride)
             input_tensor = patches.contiguous().view(-1, 9, self.patch_size, self.stride)#.squeeze(0)
-        #print(input_tensor.shape)
-        #exit(0)
+
         return input_tensor, label
                 
 

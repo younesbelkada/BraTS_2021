@@ -15,7 +15,7 @@ from graphs.losses.example import BinaryCrossEntropy
 from datasets.brats import BraTS_mean_Dataloader
 
 # import your classes here
-
+from tensorboardX import SummaryWriter
 from utils.metrics import AverageMeter, AverageMeterList, cls_accuracy
 from utils.misc import print_cuda_statistics
 from utils.utils_train import binary_acc, print_summary_step
@@ -48,7 +48,7 @@ class MLP_MixerAgent(BaseAgent):
         # initialize counter
         self.current_epoch = 0
         self.current_iteration = 0
-        self.best_metric = 0
+        self.best_valid_acc = 0
 
         # set cuda flag
         self.is_cuda = torch.cuda.is_available()
@@ -72,7 +72,7 @@ class MLP_MixerAgent(BaseAgent):
         # Model Loading from the latest checkpoint if not found start from scratch.
         self.load_checkpoint(self.config.checkpoint_file)
         # Summary Writer
-        self.summary_writer = None
+        self.summary_writer = SummaryWriter(log_dir=self.config.summary_dir, comment='FirstTest')
 
     def load_checkpoint(self, filename):
         """
@@ -153,7 +153,7 @@ class MLP_MixerAgent(BaseAgent):
         uses tqdm to load data in parallel? Nope thats not true
         :return:
         """
-        tqdm_batch = tqdm(self.data_loader.train_loader, total=self.data_loader.train_loader.train_iterations,
+        tqdm_batch = tqdm(self.data_loader.train_loader, total=self.data_loader.train_iterations,
                           desc="Epoch-{}-".format(self.current_epoch))
         # Set the model to be in training mode
         self.model.train()
@@ -166,16 +166,11 @@ class MLP_MixerAgent(BaseAgent):
         for x, y in tqdm_batch:
             if self.cuda:
                 x, y = x.cuda(non_blocking=self.config.async_loading), y.cuda(non_blocking=self.config.async_loading)
-
-            # current iteration over total iterations
-            progress = float(self.current_epoch * self.data_loader.train_loader.train_iterations + current_batch) / (
-                    self.config.max_epoch * self.data_loader.train_loader.train_iterations)
-            # progress = float(self.current_iteration) / (self.config.max_epoch * self.data_loader.train_iterations)
-            x, y = Variable(x), Variable(y)
+            x, y = Variable(x), Variable(y).unsqueeze(1).type(torch.float) # I don't even know why
             lr = adjust_learning_rate(self.optimizer, self.current_epoch, self.config, batch=current_batch,
-                                      nBatch=self.data_loader.train_loader.train_iterations)
+                                      nBatch=self.data_loader.train_iterations)
             # model
-            pred = self.model(x, progress)
+            pred = self.model(x)
             # loss
             cur_loss = self.loss(pred, y)
             if np.isnan(float(cur_loss.item())):
@@ -185,11 +180,10 @@ class MLP_MixerAgent(BaseAgent):
             cur_loss.backward()
             self.optimizer.step()
 
-            top1, top5 = cls_accuracy(pred.data, y.data, topk=(1, 5))
+            top1 = cls_accuracy(pred.data, y.data)
 
             epoch_loss.update(cur_loss.item())
-            top1_acc.update(top1.item(), x.size(0))
-            top5_acc.update(top5.item(), x.size(0))
+            top1_acc.update(top1[0].item(), x.size(0))
 
             self.current_iteration += 1
             current_batch += 1
@@ -221,7 +215,7 @@ class MLP_MixerAgent(BaseAgent):
             if self.cuda:
                 x, y = x.cuda(non_blocking=self.config.async_loading), y.cuda(non_blocking=self.config.async_loading)
 
-            x, y = Variable(x), Variable(y)
+            x, y = Variable(x), Variable(y).unsqueeze(1).type(torch.float)
             # model
             pred = self.model(x)
             # loss
@@ -229,10 +223,11 @@ class MLP_MixerAgent(BaseAgent):
             if np.isnan(float(cur_loss.item())):
                 raise ValueError('Loss is nan during validation...')
 
-            top1, top5 = cls_accuracy(pred.data, y.data, topk=(1, 5))
+            top1 = cls_accuracy(pred.data, y.data)
+
             epoch_loss.update(cur_loss.item())
-            top1_acc.update(top1.item(), x.size(0))
-            top5_acc.update(top5.item(), x.size(0))
+            top1_acc.update(top1[0].item(), x.size(0))
+
 
         self.logger.info("Validation results at epoch-" + str(self.current_epoch) + " | " + "loss: " + str(
             epoch_loss.avg) + "- Top1 Acc: " + str(top1_acc.val) + "- Top5 Acc: " + str(top5_acc.val))
