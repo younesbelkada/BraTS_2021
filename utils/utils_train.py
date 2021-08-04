@@ -1,6 +1,5 @@
 from sklearn.metrics import average_precision_score
 from pydicom.pixel_data_handlers.util import apply_voi_lut
-import cv2
 import torch
 
 def binary_acc(y_pred, y_test):
