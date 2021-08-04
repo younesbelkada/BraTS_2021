@@ -25,12 +25,13 @@
     "async_loading": true,
   
     "data_mode": "images",
-    "img_dir": "/home/arthur/Work/kaggle/BraTS_2021/data/",
-    "annotation_file": "/home/arthur/Work/kaggle/BraTS_2021/data/train_labels.csv",
+    "img_dir": "./archives_mean",
+    "annotation_file": "./archive/train_labels.csv",
 
     "valid_size": 0.2,
     "build": false,
     "patches": false,
+    "pretrained": false,
     "img_size": 255,
     "patch_size": 75,
     "stride": 75,
