@@ -3,7 +3,6 @@
     "mode": "train",
     "testing": true,
     "summary_dir": "",
-    "testing": false,
     "cuda": true,
     "gpu_device": 0,
     "seed": 1337,
@@ -30,7 +29,7 @@
     "annotation_file": "/home/arthur/Work/kaggle/BraTS_2021/data/train_labels.csv",
 
     "valid_size": 0.2,
-    "build": true,
+    "build": false,
     "patches": false,
     "img_size": 255,
     "patch_size": 75,

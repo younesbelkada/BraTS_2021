@@ -35,6 +35,7 @@ class BraTS_Dataset_mean(Dataset):
     def job(self,subjects,label):
         output_directory_subject = os.path.join(self.output_directory, subjects)
         os.makedirs(output_directory_subject,exist_ok=True)
+        pt = []
         for tool in self.tools:
             path_to_images = glob(os.path.join(self.img_dir, self.split, subjects, tool, self.ext))
             if self.build_:
@@ -44,11 +45,10 @@ class BraTS_Dataset_mean(Dataset):
                     if self.ext == "*.dcm":
                         dicom = pydicom.read_file(im)
                         data = dicom.pixel_array
-                        print(data)
-                        exit(0)
+                        
                         if np.min(data)==np.max(data): data = np.zeros((self.im_size,self.im_size))
-                        data = data - np.min(data)
-                        if np.max(data) != 0: data = data / np.max(data)
+                        # data = data - np.min(data)
+                        # if np.max(data) != 0: data = data / np.max(data)
                         mean_im +=  cv2.resize(data, (self.im_size,self.im_size))
                     elif self.ext == "*.png":
                         pil_im = np.array(Image.open(im).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
@@ -58,11 +58,11 @@ class BraTS_Dataset_mean(Dataset):
                 if len(path_to_images) != 0:
                     mean_im = (mean_im/len(path_to_images)).astype(np.uint8)
                 mean_pil_im = Image.fromarray(mean_im.astype(np.uint8))
-                mean_pil_im.save(os.path.join(output_directory_subject, subjects+'_{}.png'.format(tool)))
-
+                mean_pil_im.save(os.path.join(output_directory_subject, f'{subjects}_{tool}.png'))
+            pt.append((os.path.join(output_directory_subject, f'{subjects}_{tool}.png')))
             # this oprobably slows it down cuz of the accesses to label? Also every "self adds a reading to the data, should be local to each job"
-            pt = (os.path.join(output_directory_subject, subjects+'_{}.png'.format(tool)))
-            return [pt,label]
+            
+        return [pt,label]
 
 
     def preprocess(self):
@@ -82,13 +82,12 @@ class BraTS_Dataset_mean(Dataset):
     def __getitem__(self, idx):
         img_path = self.image_path[idx]
         label = self.targets[idx]
-        
 
         image = np.zeros((4,self.im_size,self.im_size), np.uint8)
-        image[0, :, :] = np.array(Image.open(img_path).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
-        image[1, :, :] = np.array(Image.open(img_path.replace('FLAIR','T1w'  )).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
-        image[2, :, :] = np.array(Image.open(img_path.replace('FLAIR','T1wCE')).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
-        image[3, :, :] = np.array(Image.open(img_path.replace('FLAIR','T2w'  )).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[0, :, :] = np.array(Image.open(img_path[0]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[1, :, :] = np.array(Image.open(img_path[1]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[3, :, :] = np.array(Image.open(img_path[2]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[2, :, :] = np.array(Image.open(img_path[3]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
 
         input_tensor = torch.from_numpy(image).type(torch.float)
         if self.transform:
