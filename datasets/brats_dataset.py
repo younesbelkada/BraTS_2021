@@ -32,7 +32,8 @@ class BraTS_Dataset_mean(Dataset):
         self.targets = []
         self.preprocess()
 
-    def job(self,subjects,label):
+    def job(self,subjects):
+        label = int(self.csv_df.loc[int(subjects)]) 
         output_directory_subject = os.path.join(self.output_directory, subjects)
         os.makedirs(output_directory_subject,exist_ok=True)
         pt = []
@@ -47,8 +48,9 @@ class BraTS_Dataset_mean(Dataset):
                         data = dicom.pixel_array
                         
                         if np.min(data)==np.max(data): data = np.zeros((self.im_size,self.im_size))
-                        # data = data - np.min(data)
-                        # if np.max(data) != 0: data = data / np.max(data)
+                        data = data - np.min(data)
+                        if np.max(data) != 0: data = data / np.max(data)
+                        data*=255
                         mean_im +=  cv2.resize(data, (self.im_size,self.im_size))
                     elif self.ext == "*.png":
                         pil_im = np.array(Image.open(im).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
@@ -61,7 +63,7 @@ class BraTS_Dataset_mean(Dataset):
                 mean_pil_im.save(os.path.join(output_directory_subject, f'{subjects}_{tool}.png'))
             pt.append((os.path.join(output_directory_subject, f'{subjects}_{tool}.png')))
             # this oprobably slows it down cuz of the accesses to label? Also every "self adds a reading to the data, should be local to each job"
-            
+        
         return [pt,label]
 
 
@@ -73,8 +75,8 @@ class BraTS_Dataset_mean(Dataset):
         self.output_directory = os.path.join(self.path_output, self.split)
         if self.build_: 
             os.makedirs(self.output_directory,exist_ok=True)
-        temp_data = (p_map(self.job,array_data,self.csv_df["MGMT_value"]))
-        self.image_path,self.targets = zip(*temp_data)
+        temp_data = (p_map(self.job,array_data))
+        self.image_path,self.targets = zip(*temp_data) #@TODO sanity check autimatic
 
     def __len__(self):
         return len(self.image_path)
@@ -86,8 +88,8 @@ class BraTS_Dataset_mean(Dataset):
         image = np.zeros((4,self.im_size,self.im_size), np.uint8)
         image[0, :, :] = np.array(Image.open(img_path[0]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
         image[1, :, :] = np.array(Image.open(img_path[1]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
-        image[3, :, :] = np.array(Image.open(img_path[2]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
-        image[2, :, :] = np.array(Image.open(img_path[3]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[2, :, :] = np.array(Image.open(img_path[2]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
+        image[3, :, :] = np.array(Image.open(img_path[3]).resize((self.im_size,self.im_size), Image.ANTIALIAS).convert('L'))
 
         input_tensor = torch.from_numpy(image).type(torch.float)
         if self.transform:

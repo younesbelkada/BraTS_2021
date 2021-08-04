@@ -122,6 +122,8 @@ class MLP_MixerAgent(BaseAgent):
         :return:
         """
         try:
+            # @TODO change mode test, not validate? Or just change dataloader
+            # create test run
             if self.config.mode == 'test':
                 self.validate()
             else:
@@ -173,14 +175,17 @@ class MLP_MixerAgent(BaseAgent):
             x, y = Variable(x), Variable(y).unsqueeze(1).type(torch.float) # I don't even know why
             lr = adjust_learning_rate(self.optimizer, self.current_epoch, self.config, batch=current_batch,
                                       nBatch=self.data_loader.train_iterations)
+            
+            self.optimizer.zero_grad() 
             # model
             pred = self.model(x)
             # loss
             cur_loss = self.loss(pred, y)
+
             if np.isnan(float(cur_loss.item())):
                 raise ValueError('Loss is nan during training...')
             # optimizer
-            self.optimizer.zero_grad()
+            
             cur_loss.backward()
             self.optimizer.step()
 
