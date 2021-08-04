@@ -139,12 +139,13 @@ class MLP_MixerAgent(BaseAgent):
             self.current_epoch = epoch
             self.train_one_epoch()
 
-            valid_acc = self.validate()
-            if self.config.testing:exit(1)
-            is_best = valid_acc > self.best_valid_acc
-            if is_best:
-                self.best_valid_acc = valid_acc
-            self.save_checkpoint(is_best=is_best)
+            if epoch%self.config.validate_every==0 or self.config.testing:
+                valid_acc = self.validate()
+                if self.config.testing:exit(1)
+                is_best = valid_acc > self.best_valid_acc
+                if is_best:
+                    self.best_valid_acc = valid_acc
+                self.save_checkpoint(is_best=is_best)
         
 
 

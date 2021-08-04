@@ -7,15 +7,15 @@
     "gpu_device": 0,
     "seed": 1337,
   
-    "batch_size": 4,
+    "batch_size": 8,
     "in_channels": 4,
-    "learning_rate": 0.0002,
+    "learning_rate": 0.005,
     "weight_decay": 0,
 
   
     "max_epoch": 100,
   
-    "validate_every": 1,
+    "validate_every": 10,
   
     "checkpoint_file": "checkpoint.pth.tar",
   
