@@ -140,6 +140,7 @@ class MLP_MixerAgent(BaseAgent):
             self.train_one_epoch()
 
             valid_acc = self.validate()
+            if self.config.testing:exit(1)
             is_best = valid_acc > self.best_valid_acc
             if is_best:
                 self.best_valid_acc = valid_acc
@@ -153,6 +154,8 @@ class MLP_MixerAgent(BaseAgent):
         uses tqdm to load data in parallel? Nope thats not true
         :return:
         """
+        if self.config.testing: 
+            self.data_loader.train_iterations = 10
         tqdm_batch = tqdm(self.data_loader.train_loader, total=self.data_loader.train_iterations,
                           desc="Epoch-{}-".format(self.current_epoch))
         # Set the model to be in training mode

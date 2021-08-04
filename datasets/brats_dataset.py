@@ -3,18 +3,14 @@ import torch
 import numpy as np
 import os
 import pandas as pd
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from glob import glob
-from tqdm import tqdm
-import csv
 from torchvision import transforms
-from pydicom.pixel_data_handlers.util import apply_voi_lut
-import itertools
 from PIL import Image
 from utils.utils_train import *
 import pydicom
 from p_tqdm import p_map
-
+import cv2
 class BraTS_Dataset_mean(Dataset):
     def __init__(self, img_dir, annotation_file, transform=None, build_=False, patches=True,split="train"):
         
@@ -48,6 +44,8 @@ class BraTS_Dataset_mean(Dataset):
                     if self.ext == "*.dcm":
                         dicom = pydicom.read_file(im)
                         data = dicom.pixel_array
+                        print(data)
+                        exit(0)
                         if np.min(data)==np.max(data): data = np.zeros((self.im_size,self.im_size))
                         data = data - np.min(data)
                         if np.max(data) != 0: data = data / np.max(data)
