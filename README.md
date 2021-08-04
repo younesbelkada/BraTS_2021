@@ -79,3 +79,7 @@ Articles too read :
 * Regression Concept Vectors for Bidirectional Explanations in Histopathology [source](https://arxiv.org/pdf/1904.04520v1.pdf)
 * Recurrent Saliency Transformation Network: Incorporating Multi-Stage Visual Cues for Small Organ Segmentation [source](https://arxiv.org/pdf/1709.04518v4.pdf)
 
+## To do 
+
+* Add hparam for the run, architecture file to check
+* use nvidi's runx? separate each run since the given args will be different
