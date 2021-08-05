@@ -30,6 +30,11 @@ class MLP_MixerAgent(BaseAgent):
         super().__init__(config)
 
         # define models
+    
+        # to use efficientNet 3d:
+        # model = EfficientNet3D.from_name("efficientnet-b0", override_params={'num_classes': 1}, in_channels=1)
+        # use a better pre-trained model based on adversarial training
+        # model = EfficientNet.from_pretrained("efficientnet-b0", advprop=True)
         self.model = MLP_Mixer(self.config)
 
         # define data_loader
