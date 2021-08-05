@@ -76,6 +76,8 @@ The agent controls the training and evaluation process of your model and is cons
 * 3d-CNN (according to kaggle)
 * 3d Efficientnet
 * Autoencoder + k-NN??
+* Adversarial training
+* Use external modalities (orientation of the image)
 
 
 Articles to read : 
