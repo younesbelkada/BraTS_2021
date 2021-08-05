@@ -111,7 +111,7 @@ class Conv3dDynamicSamePadding(nn.Conv3d):
         ih, iw, iz = x.size()[-3:]
         kh, kw, kz = self.weight.size()[-3:]
         sh, sw, sz = self.stride
-        oh, ow, oz = math.ceil(ih / sh), math.ceil(iw / sw), math.ceil(iz / oz)
+        oh, ow, oz = math.ceil(ih / sh), math.ceil(iw / sw), math.ceil(iz / sz)
         pad_h = max((oh - 1) * self.stride[0] + (kh - 1) * self.dilation[0] + 1 - ih, 0)
         pad_w = max((ow - 1) * self.stride[1] + (kw - 1) * self.dilation[1] + 1 - iw, 0)
         pad_z = max((oz - 1) * self.stride[2] + (kz - 1) * self.dilation[2] + 1 - iz, 0)
