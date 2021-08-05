@@ -77,7 +77,7 @@ Articles too read :
 
 We can leverage this idea for our case since they are dealing with sequential data as well. They are using 3d transformers given a set of frames. Attention mechanisms as well as skip connections (in 3d) are used. We definitely need to try out this after understanding the concept
 
-[](assets/architecture_UNETR.png)
+![Image](assets/architecture_UNETR.png)
 
 #### One-pass Multi-task Networks with Cross-task Guided Attention for Brain Tumor Segmentation, [source](https://arxiv.org/pdf/1906.01796v2.pdf)
 
