@@ -25,8 +25,8 @@
     "async_loading": true,
   
     "data_mode": "images",
-    "img_dir": "/home/arthur/Work/kaggle/BraTS_2021/data/",
-    "annotation_file": "/home/arthur/Work/kaggle/BraTS_2021/data/train_labels.csv",
+    "img_dir": "./archives_mean",
+    "annotation_file": "./archives/train_labels.csv",
 
     "valid_size": 0.2,
     "build": false,

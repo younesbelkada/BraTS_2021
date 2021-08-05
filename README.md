@@ -70,11 +70,29 @@ The agent controls the training and evaluation process of your model and is cons
 * KP Conv
 * voxel
 
-### 1st August 
+### Baselines
 
-Articles too read : 
-* UNETR: Transformers for 3D Medical Image Segmentation, [source](https://arxiv.org/pdf/2103.10504v1.pdf)
-* One-pass Multi-task Networks with Cross-task Guided Attention for Brain Tumor Segmentation, [source](https://arxiv.org/pdf/1906.01796v2.pdf)
+* Mean image + Resnet / Efficientnet. According to kaggle discussions, Efficientnet is doing crazy on this dataset
+* 3d-CNN (according to kaggle)
+* 3d Efficientnet
+* Autoencoder + k-NN??
+* Adversarial training
+* Use external modalities (orientation of the image)
+
+
+Articles to read : 
+#### UNETR: Transformers for 3D Medical Image Segmentation, [source](https://arxiv.org/pdf/2103.10504v1.pdf)
+
+We can leverage this idea for our case since they are dealing with sequential data as well. They are using 3d transformers given a set of frames. Attention mechanisms as well as skip connections (in 3d) are used. We definitely need to try out this after understanding the concept
+
+![Image](assets/architecture_UNETR.png)
+
+
+
+#### One-pass Multi-task Networks with Cross-task Guided Attention for Brain Tumor Segmentation, [source](https://arxiv.org/pdf/1906.01796v2.pdf)
+
+
+
 * Medical Image Segmentation Using Squeeze-and-Expansion Transformers [source](https://arxiv.org/pdf/2105.09511v3.pdf)
 * Regression Concept Vectors for Bidirectional Explanations in Histopathology [source](https://arxiv.org/pdf/1904.04520v1.pdf)
 * Recurrent Saliency Transformation Network: Incorporating Multi-Stage Visual Cues for Small Organ Segmentation [source](https://arxiv.org/pdf/1709.04518v4.pdf)
