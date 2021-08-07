@@ -134,6 +134,7 @@ class BraTS_Dataset_3d(Dataset):
             if self.build_:
                 output_im = np.zeros((self.padd_sequence, self.im_size,self.im_size), np.float)
                 offset = len(path_to_images)//2
+                path_to_images = sort_path_images(path_to_images, self.ext)
                 for i, im in enumerate(path_to_images):
                     # depending on the file extension, either get the np array, or process the image directly 
                     if self.ext == "*.dcm":

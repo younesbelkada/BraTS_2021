@@ -1,6 +1,7 @@
 from sklearn.metrics import average_precision_score
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 import torch
+import os
 
 def binary_acc(y_pred, y_test):
     y_pred_tag = torch.round(torch.flatten(y_pred))
@@ -17,3 +18,12 @@ def print_summary_step(step, train_loss, acc):
 
 def average_precision(output, target):
     return average_precision_score(target.detach().cpu().numpy(), output.detach().cpu().numpy())
+
+def sort_path_images(path_images, ext='.dcm'):
+    #i = 0
+    di = {}
+    for im in path_images:
+        name = os.path.basename(im)
+        number = int(name.split(ext)[0].split('-')[-1])
+        di[number] = im
+    return dict(sorted(di.items())).values().tolist()
